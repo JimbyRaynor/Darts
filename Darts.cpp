@@ -1,0 +1,150 @@
+// DartsConsole.cpp : This file contains the 'main' function. Program execution begins and ends there.
+//
+
+
+
+int r; // round number
+int t; // choice of type of throw ... 1 , 2 or 3
+int b; // score awarded for shot
+int s; // total score
+long long seed=0, seed1, seed2; // seed for random numbers
+double p1, p2, p3, p4; // probability waitings for successful shots
+double u; // 0 <= u <= 1,  random number to compare with probability waitings
+
+#include <iostream>
+#include <ctime>
+#include <chrono>
+#include <termios.h>
+
+using namespace std;
+
+#include <iostream>
+#include <unistd.h>
+#include <termios.h>
+
+char getch() {
+    char buf = 0;
+    struct termios old = {0};
+    if (tcgetattr(0, &old) < 0) {
+        perror("tcgetattr");
+    }
+    old.c_lflag &= ~ICANON;
+    old.c_lflag &= ~ECHO;
+    old.c_cc[VMIN] = 1;
+    old.c_cc[VTIME] = 0;
+    if (tcsetattr(0, TCSANOW, &old) < 0) {
+        perror("tcsetattr");
+    }
+    if (read(0, &buf, 1) < 0) {
+        perror("read");
+    }
+    old.c_lflag |= ICANON;
+    old.c_lflag |= ECHO;
+    if (tcsetattr(0, TCSADRAIN, &old) < 0) {
+        perror("tcsetattr");
+    }
+    return buf;
+}
+
+void clearscreen()
+{
+ cout << "\033[2J";  
+}
+
+void gotoxy(int x, int y)
+{
+  //cout << "\033[1A";
+  cout << "\033["+to_string(y)+";"+to_string(x)+"H";
+  //cout << "\033[H";
+}
+
+
+
+int main()
+{
+    clearscreen();
+    gotoxy(0,0);
+    seed = chrono::high_resolution_clock::now().time_since_epoch().count();  // better seed for random numbers since it uses nanoseconds
+    srand(seed); // set random seed
+    s = 0;  // total score
+    cout << "Bullseye ... by David Ahl of Creative Computing \n";
+    cout << "Throw darts at a target with 10, 20, 30 and 40 point zones \n\n";
+    cout << "Throw           Description          Probable Score \n";
+    cout << " 1              Fast Overarm         Bullseye or Complete Miss  \n";
+    cout << " 2              Controlled Overarm   10, 20, or 30 points \n";
+    cout << " 3              Underarm             Anything \n\n\n";
+    cout << "\033[1;38;2;255;0;0m zzPress any key to continue...\n";
+    gotoxy(2,3); cout << "x";
+    char ch = getch();
+    std::cout << "Key pressed: " << ch << "\n";
+    r = 0;
+    while (s < 200)
+    {
+        r = r + 1;
+        cout << "Round " << r << "\n";
+        cout << "--------\n";
+        cout << "Input your choice of type of throw (1,2,3): ";
+        cin >> t;
+        switch (t)
+        {
+        case 1:
+            p1 = 0.65;
+            p2 = 0.55;
+            p3 = 0.5;
+            p4 = 0.5;
+            break;
+        case 2:
+            p1 = 0.99;
+            p2 = 0.77;
+            p3 = 0.43;
+            p4 = 0.01;
+            break;
+        default:
+            p1 = 0.95;
+            p2 = 0.75;
+            p3 = 0.45;
+            p4 = 0.05;
+        }
+        u = 1.0 * rand() / RAND_MAX;
+        if (u >= p1)
+        {
+            cout << "Bullseye!! 40 points!";
+            b = 40;
+        }
+        else if (u >= p2)
+        {
+            cout << "30 points!";
+            b = 30;
+        }
+        else if (u >= p3)
+        {
+            cout << "20 points!";
+            b = 20;
+        }
+        else if (u >= p4)
+        {
+            cout << "10 points!";
+            b = 10;
+        }
+        else
+        {
+            cout << "Whoops! You missed the target!";
+            b = 0;
+        }
+        s = s + b;
+        cout << "\n\n Total Score = " << s << "\n";
+    }
+    cout << "You finished on Round " << r << "\n";
+
+}
+
+// Run program: Ctrl + F5 or Debug > Start Without Debugging menu
+// Debug program: F5 or Debug > Start Debugging menu
+
+// Tips for Getting Started: 
+//   1. Use the Solution Explorer window to add/manage files
+//   2. Use the Team Explorer window to connect to source control
+//   3. Use the Output window to see build output and other messages
+//   4. Use the Error List window to view errors
+//   5. Go to Project > Add New Item to create new code files, or Project > Add Existing Item to add existing code files to the project
+//   6. In the future, to open this project again, go to File > Open > Project and select the .sln file
