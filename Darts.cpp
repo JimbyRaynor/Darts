@@ -1,7 +1,14 @@
 // DartsConsole.cpp : This file contains the 'main' function. Program execution begins and ends there.
 //
 
+#include <iostream>
+#include <ctime>
+#include <chrono> // need for time (and so random) function
 
+#include <unistd.h>  // need for getch()
+#include <termios.h>  // need for getch()
+
+using namespace std;
 
 int r; // round number
 int t; // choice of type of throw ... 1 , 2 or 3
@@ -11,16 +18,8 @@ long long seed=0, seed1, seed2; // seed for random numbers
 double p1, p2, p3, p4; // probability waitings for successful shots
 double u; // 0 <= u <= 1,  random number to compare with probability waitings
 
-#include <iostream>
-#include <ctime>
-#include <chrono>
-#include <termios.h>
 
-using namespace std;
 
-#include <iostream>
-#include <unistd.h>
-#include <termios.h>
 
 char getch() {
     char buf = 0;
@@ -53,35 +52,63 @@ void clearscreen()
 
 void gotoxy(int x, int y)
 {
-  //cout << "\033[1A";
   cout << "\033["+to_string(y)+";"+to_string(x)+"H";
-  //cout << "\033[H";
 }
 
+void drawh(int x1,int y1,int x2)
+{
+    for (int i = x1;i<=x2;i++)
+    {
+        gotoxy(i,y1);
+        cout << "*";
+    }
+}
 
+void drawv(int x1,int y1,int y2)
+{
+    for (int i = y1;i<=y2;i++)
+    {
+        gotoxy(x1,i);
+        cout << "*";
+    }
+}
+
+void drawrect(int x1, int y1, int x2,int y2)
+{
+    drawh(x1,y1,x2);
+    drawh(x1,y2,x2);
+    drawv(x1,y1,y2);
+    drawv(x2,y1,y2);
+}
 
 int main()
 {
+    char inch;
+    cout << "\033[1;38;2;255;0;0m Maximise your terminal screen and press any key to continue...\n";
+    inch = getch();
     clearscreen();
-    gotoxy(0,0);
+    drawrect(1,1,70,11);
     seed = chrono::high_resolution_clock::now().time_since_epoch().count();  // better seed for random numbers since it uses nanoseconds
     srand(seed); // set random seed
     s = 0;  // total score
-    cout << "Bullseye ... by David Ahl of Creative Computing \n";
-    cout << "Throw darts at a target with 10, 20, 30 and 40 point zones \n\n";
-    cout << "Throw           Description          Probable Score \n";
-    cout << " 1              Fast Overarm         Bullseye or Complete Miss  \n";
-    cout << " 2              Controlled Overarm   10, 20, or 30 points \n";
-    cout << " 3              Underarm             Anything \n\n\n";
-    cout << "\033[1;38;2;255;0;0m zzPress any key to continue...\n";
-    gotoxy(2,3); cout << "x";
-    char ch = getch();
-    std::cout << "Key pressed: " << ch << "\n";
+    gotoxy(3,2 ); cout << "Bullseye ... by David Ahl of Creative Computing";
+    gotoxy(3,3 ); cout << "Throw darts at a target with 10, 20, 30 and 40 point zones";
+    gotoxy(3,4 ); cout << "First player to reach 200 points wins";
+    drawh(1,5,70);
+    gotoxy(3,6 ); cout << "Throw           Description             Probable Score";
+    drawh(1,7,70);
+    gotoxy(3,8 ); cout << "  1             Fast Overarm            Bullseye or Complete Miss";
+    gotoxy(3,9 ); cout << "  2             Controlled Overarm      10, 20, or 30 points";
+    gotoxy(3,10); cout << "  3             Underarm                Anything";
+    drawv(11,6,11); drawv(40,6,11);
+    gotoxy(3,16); cout << "\033[1;38;2;255;0;0m Press any key to continue...\n";
+    inch = getch();
+    std::cout << "Key pressed: " << inch << "\n";
     r = 0;
     while (s < 200)
     {
         r = r + 1;
-        cout << "Round " << r << "\n";
+        cout << "Round Number " << r << "\n";
         cout << "--------\n";
         cout << "Input your choice of type of throw (1,2,3): ";
         cin >> t;
