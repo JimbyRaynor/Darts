@@ -1,12 +1,11 @@
 // DartsConsole.cpp : This file contains the 'main' function. Program execution begins and ends there.
 //
 
+// Add 3 AI players: first one to 200 wins 
+
 #include <iostream>
 #include <ctime>
 #include <chrono> // need for time (and so random) function
-
-#include <unistd.h>  // need for getch()
-#include <termios.h>  // need for getch()
 
 using namespace std;
 
@@ -17,33 +16,6 @@ int s; // total score
 long long seed=0, seed1, seed2; // seed for random numbers
 double p1, p2, p3, p4; // probability waitings for successful shots
 double u; // 0 <= u <= 1,  random number to compare with probability waitings
-
-
-
-
-char getch() {
-    char buf = 0;
-    struct termios old = {0};
-    if (tcgetattr(0, &old) < 0) {
-        perror("tcgetattr");
-    }
-    old.c_lflag &= ~ICANON;
-    old.c_lflag &= ~ECHO;
-    old.c_cc[VMIN] = 1;
-    old.c_cc[VTIME] = 0;
-    if (tcsetattr(0, TCSANOW, &old) < 0) {
-        perror("tcsetattr");
-    }
-    if (read(0, &buf, 1) < 0) {
-        perror("read");
-    }
-    old.c_lflag |= ICANON;
-    old.c_lflag |= ECHO;
-    if (tcsetattr(0, TCSADRAIN, &old) < 0) {
-        perror("tcsetattr");
-    }
-    return buf;
-}
 
 void clearscreen()
 {
@@ -83,9 +55,6 @@ void drawrect(int x1, int y1, int x2,int y2)
 
 int main()
 {
-    char inch;
-    cout << "\033[1;38;2;255;0;0m Maximise your terminal screen and press any key to continue...\n";
-    inch = getch();
     clearscreen();
     drawrect(1,1,70,11);
     seed = chrono::high_resolution_clock::now().time_since_epoch().count();  // better seed for random numbers since it uses nanoseconds
@@ -101,20 +70,17 @@ int main()
     gotoxy(3,9 ); cout << "  2             Controlled Overarm      10, 20, or 30 points";
     gotoxy(3,10); cout << "  3             Underarm                Anything";
     drawv(11,6,11); drawv(40,6,11);
-    gotoxy(3,16); cout << "\033[1;38;2;255;0;0m Press any key to continue...\n";
-    inch = getch();
-    std::cout << "Key pressed: " << inch << "\n";
     r = 0;
     while (s < 200)
     {
         r = r + 1;
-        cout << "Round Number " << r << "\n";
-        cout << "--------\n";
-        cout << "Input your choice of type of throw (1,2,3): ";
+        gotoxy(3,16);cout << "Round " << r;
+        gotoxy(3,17);cout << "Input your choice of type of throw (1,2,3) followed by <Enter>: ";
         cin >> t;
         switch (t)
         {
         case 1:
+            gotoxy(3,18);cout << "Fast Overarm";
             p1 = 0.65;
             p2 = 0.55;
             p3 = 0.5;
@@ -127,11 +93,13 @@ int main()
             p4 = 0.01;
             break;
         default:
+            gotoxy(3,18);cout << "default";
             p1 = 0.95;
             p2 = 0.75;
             p3 = 0.45;
             p4 = 0.05;
         }
+        gotoxy(3,22);
         u = 1.0 * rand() / RAND_MAX;
         if (u >= p1)
         {
