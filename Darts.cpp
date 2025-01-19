@@ -13,7 +13,6 @@
 using namespace std;
 
 int r; // round number
-int t; // choice of type of throw ... 1 , 2 or 3
 int b; // score awarded for shot
 int s; // total score
 long long seed=0, seed1, seed2; // seed for random numbers
@@ -110,7 +109,7 @@ void drawrect(int x1, int y1, int x2,int y2)
 
 int main()
 {
-    char inputc;
+    char choice;
     clearscreen();
     seed = chrono::high_resolution_clock::now().time_since_epoch().count();  // better seed for random numbers since it uses nanoseconds
     srand(seed); // set random seed
@@ -133,27 +132,27 @@ int main()
     while (s < 200)
     {
         r = r + 1;
+        setgreen();
         gotoxy(3,16);cout << "Round " << r;
         gotoxy(3,17);cout << "Input your choice of type of throw (1,2,3):";
         cout << flush; // draw to screen immediately, do not buffer
-        inputc = rbgetchar();
-        t = (int) inputc - 48;
+        choice = rbgetchar();
         setyellow();
         for( int i = 0; i<50;i++)
         {
-         gotoxy(3+i,18);cout << "->" << t;
+         gotoxy(3+i,18);cout << " -" << choice << "->";
          cout << flush; // draw to screen immediately, do not buffer
          pause(30);
         }
-        switch (t)
+        switch (choice)
         {
-        case 1:
+        case '1':
             p1 = 0.65;
-            p2 = 0.5;
-            p3 = 0.5;
-            p4 = 0.5;
+            p2 = 0.64;
+            p3 = 0.63;
+            p4 = 0.62;
             break;
-        case 2:
+        case '2':
             p1 = 0.99;
             p2 = 0.77;
             p3 = 0.43;
@@ -166,7 +165,7 @@ int main()
             p4 = 0.05;
         }
         u = 1.0 * rand() / RAND_MAX;
-        gotoxy(54,18);
+        gotoxy(57,18);
         setred();
         if (u >= p1)
         {
@@ -175,22 +174,22 @@ int main()
         }
         else if (u >= p2)
         {
-            cout << "**30 points**";
+            cout << "**30 points**           ";
             b = 30;
         }
         else if (u >= p3)
         {
-            cout << "**20 points**";
+            cout << "**20 points**           ";
             b = 20;
         }
         else if (u >= p4)
         {
-            cout << "**10 points**";
+            cout << "**10 points**           ";
             b = 10;
         }
         else
         {
-            cout << "**Miss**";
+            cout << "**Miss**                ";
             b = 0;
         }
         s = s + b;
