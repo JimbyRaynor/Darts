@@ -15,9 +15,9 @@ using namespace std;
 int r; // round number
 int b; // score awarded for shot
 int s = 0; // total human player score
-int s2 = 0; // total computer player 2 score
-int s3 = 0; // total computer player 3 score
-int s4 = 0; // total computer player 4 score
+int s1 = 0; // total computer player 2 score
+int s2 = 0; // total computer player 3 score
+int s3 = 0; // total computer player 4 score
 
 long long seed=0, seed1, seed2; // seed for random numbers
 double p1, p2, p3, p4; // probability waitings for successful shots
@@ -170,7 +170,7 @@ void shoot(char choice, int playernum)
         setyellow();
         for( int i = 0; i<50;i++)
         {
-         gotoxy(3+i,17+playernum);
+         gotoxy(3+i,14+playernum);
          cout << " -" << choice << "->";
          cout << flush; // draw to screen immediately, do not buffer
          pause(10);
@@ -198,12 +198,12 @@ int main()
     drawv(11,6,11); 
     drawv(40,6,11);
     r = 0;
-    while ( (s < 200) && (s2 < 200) && (s3 < 200) && (s4 < 200) )
+    while ( (s < 200) && (s1 < 200) && (s2 < 200) && (s3 < 200) )
     {
         r = r + 1;
         setgreen();
-        gotoxy(3,16);cout << "Round " << r;
-        gotoxy(3,17);cout << "Input your choice of type of throw (1,2,3):";
+        gotoxy(3,13);cout << "Round " << r;
+        gotoxy(3,14);cout << "Input your choice of type of throw (1,2,3):";
         cout << flush; // draw to screen immediately, do not buffer
         choice = rbgetchar();
         shoot(choice,1);
@@ -211,18 +211,35 @@ int main()
         s = s + b;
         shoot('1',2);
         b = calcprobs('1',2);
-        s2 = s2 + b;
+        s1 = s1 + b;
         shoot('2',3);
         b = calcprobs('2',3);
-        s3 = s3 + b;
+        s2 = s2 + b;
         shoot('3',4);
         b = calcprobs('3',4);
-        s4 = s4 + b;
+        s3 = s3 + b;
+        setblue();
         cout << "\nHuman Score      = " << s << "\n";
+        cout << "Computer 1 Score = " << s1 << "\n";
         cout << "Computer 2 Score = " << s2 << "\n";
         cout << "Computer 3 Score = " << s3 << "\n";
-        cout << "Computer 4 Score = " << s4 << "\n";
     }
-    cout << "You finished on Round " << r << "\n";
+    if (s >= 200)
+    {
+       cout << "\nHuman player wins \n"; 
+    }
+    if (s1 >= 200)
+    {
+       cout << "\nComputer 1 wins \n"; 
+    }
+    if (s2 >= 200)
+    {
+       cout << "\nComputer 2 wins \n"; 
+    }
+    if (s3 >= 200)
+    {
+       cout << "\nComputer 3 wins \n"; 
+    }
+    cout << "\nFinished on Round " << r << "\n";
 
 }
