@@ -14,7 +14,11 @@ using namespace std;
 
 int r; // round number
 int b; // score awarded for shot
-int s; // total score
+int s = 0; // total human player score
+int s2 = 0; // total computer player 2 score
+int s3 = 0; // total computer player 3 score
+int s4 = 0; // total computer player 4 score
+
 long long seed=0, seed1, seed2; // seed for random numbers
 double p1, p2, p3, p4; // probability waitings for successful shots
 double u; // 0 <= u <= 1,  random number to compare with probability waitings
@@ -107,44 +111,10 @@ void drawrect(int x1, int y1, int x2,int y2)
     drawv(x2,y1,y2);
 }
 
-int main()
+int calcprobs(char choice, int playernum)
 {
-    char choice;
-    clearscreen();
-    seed = chrono::high_resolution_clock::now().time_since_epoch().count();  // better seed for random numbers since it uses nanoseconds
-    srand(seed); // set random seed
-    s = 0;  // total score
-    setblue();
-    gotoxy(3,2 ); cout << "Bullseye ... by David Ahl of Creative Computing";
-    gotoxy(3,3 ); cout << "Throw darts at a target with 10, 20, 30 and 40 point zones";
-    gotoxy(3,4 ); cout << "First player to reach 200 points wins";
-    gotoxy(3,6 ); cout << "Throw           Description             Probable Score";
-    gotoxy(3,8 ); cout << "  1             Fast Overarm            Bullseye or Complete Miss";
-    gotoxy(3,9 ); cout << "  2             Controlled Overarm      10, 20, or 30 points";
-    gotoxy(3,10); cout << "  3             Underarm                Anything";
-    setgreen();
-    drawrect(1,1,70,11);
-    drawh(1,5,70);
-    drawh(1,7,70);
-    drawv(11,6,11); 
-    drawv(40,6,11);
-    r = 0;
-    while (s < 200)
-    {
-        r = r + 1;
-        setgreen();
-        gotoxy(3,16);cout << "Round " << r;
-        gotoxy(3,17);cout << "Input your choice of type of throw (1,2,3):";
-        cout << flush; // draw to screen immediately, do not buffer
-        choice = rbgetchar();
-        setyellow();
-        for( int i = 0; i<50;i++)
-        {
-         gotoxy(3+i,18);cout << " -" << choice << "->";
-         cout << flush; // draw to screen immediately, do not buffer
-         pause(30);
-        }
-        switch (choice)
+int b = 0;
+switch (choice)
         {
         case '1':
             p1 = 0.65;
@@ -165,7 +135,7 @@ int main()
             p4 = 0.05;
         }
         u = 1.0 * rand() / RAND_MAX;
-        gotoxy(57,18);
+        //gotoxy(57,17+playernum);
         setred();
         if (u >= p1)
         {
@@ -192,8 +162,66 @@ int main()
             cout << "**Miss**                ";
             b = 0;
         }
+    return b;
+}
+
+void shoot(char choice, int playernum)
+{
+        setyellow();
+        for( int i = 0; i<50;i++)
+        {
+         gotoxy(3+i,17+playernum);
+         cout << " -" << choice << "->";
+         cout << flush; // draw to screen immediately, do not buffer
+         pause(10);
+        }
+}
+
+int main()
+{
+    char choice;
+    clearscreen();
+    seed = chrono::high_resolution_clock::now().time_since_epoch().count();  // better seed for random numbers since it uses nanoseconds
+    srand(seed); // set random seed
+    setblue();
+    gotoxy(3,2 ); cout << "Bullseye ... by David Ahl of Creative Computing";
+    gotoxy(3,3 ); cout << "Throw darts at a target with 10, 20, 30 and 40 point zones";
+    gotoxy(3,4 ); cout << "First player to reach 200 points wins";
+    gotoxy(3,6 ); cout << "Throw           Description             Probable Score";
+    gotoxy(3,8 ); cout << "  1             Fast Overarm            Bullseye or Complete Miss";
+    gotoxy(3,9 ); cout << "  2             Controlled Overarm      10, 20, or 30 points";
+    gotoxy(3,10); cout << "  3             Underarm                Anything";
+    setgreen();
+    drawrect(1,1,70,11);
+    drawh(1,5,70);
+    drawh(1,7,70);
+    drawv(11,6,11); 
+    drawv(40,6,11);
+    r = 0;
+    while ( (s < 200) && (s2 < 200) && (s3 < 200) && (s4 < 200) )
+    {
+        r = r + 1;
+        setgreen();
+        gotoxy(3,16);cout << "Round " << r;
+        gotoxy(3,17);cout << "Input your choice of type of throw (1,2,3):";
+        cout << flush; // draw to screen immediately, do not buffer
+        choice = rbgetchar();
+        shoot(choice,1);
+        b = calcprobs(choice,1);
         s = s + b;
-        cout << "\n\n Total Score = " << s << "\n";
+        shoot('1',2);
+        b = calcprobs('1',2);
+        s2 = s2 + b;
+        shoot('2',3);
+        b = calcprobs('2',3);
+        s3 = s3 + b;
+        shoot('3',4);
+        b = calcprobs('3',4);
+        s4 = s4 + b;
+        cout << "\nHuman Score      = " << s << "\n";
+        cout << "Computer 2 Score = " << s2 << "\n";
+        cout << "Computer 3 Score = " << s3 << "\n";
+        cout << "Computer 4 Score = " << s4 << "\n";
     }
     cout << "You finished on Round " << r << "\n";
 
