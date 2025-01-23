@@ -15,9 +15,9 @@ using namespace std;
 int r; // round number
 int b; // score awarded for shot
 int s = 0; // total human player score
-int s1 = 0; // total computer player 2 score
-int s2 = 0; // total computer player 3 score
-int s3 = 0; // total computer player 4 score
+int s1 = 0; // total computer 1 score
+int s2 = 0; // total computer 2 score
+int s3 = 0; // total computer 3 score
 
 long long seed=0, seed1, seed2; // seed for random numbers
 double p1, p2, p3, p4; // probability waitings for successful shots
@@ -170,6 +170,12 @@ void shoot(char choice, int playernum)
         setyellow();
         for( int i = 0; i<50;i++)
         {
+         
+         if (playernum > 1)
+         {
+            gotoxy(3,14+playernum);
+            cout << "Computer " << playernum-1;
+         }
          gotoxy(3+i,14+playernum);
          cout << " -" << choice << "->";
          cout << flush; // draw to screen immediately, do not buffer
