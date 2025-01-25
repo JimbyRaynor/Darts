@@ -54,6 +54,11 @@ void pause(int t)
     std::this_thread::sleep_for(std::chrono::milliseconds(t));
 }
 
+void resetmode()
+{
+   cout << "\033[0m"; 
+}
+
 void clearscreen()
 {
  cout << "\033[2J";  
@@ -74,11 +79,76 @@ void setyellow()
     cout << "\033[1;38;2;255;255;0m";
 }
 
+void setblack()
+{
+    cout << "\033[1;38;2;0;0;0m";
+}
+
 void setgreen()
 {
     cout << "\033[1;38;2;0;255;0m";
 }
 
+
+void setwhite()
+{
+    cout << "\033[1;38;2;0;0;0m";
+}
+
+void setbackyellow()
+{
+    cout << "\033[1;48;2;255;255;0m";
+}
+
+void setbackgreen()
+{
+    cout << "\033[1;48;2;0;200;0m";
+}
+
+void setbackred()
+{
+    cout << "\033[1;48;2;255;0;0m";
+}
+
+void setbackblue()
+{
+    cout << "\033[1;48;2;0;0;255m";
+}
+
+void setbackgrey()
+{
+    cout << "\033[1;48;2;100;100;100m";
+}
+
+void setyellowongreen()
+{   
+    setbackgreen();
+    setyellow();
+}
+
+void setblueonyellow()
+{
+    setbackyellow();
+    setblue();
+}
+
+void setblackonred()
+{
+    setbackred();
+    setblack();
+}
+
+void setyellowonblue()
+{
+    setyellow();
+    setbackblue();   
+}
+
+void setwhiteongrey()
+{
+    setwhite();
+    setbackgrey();   
+}
 
 void gotoxy(int x, int y)
 {
@@ -87,28 +157,34 @@ void gotoxy(int x, int y)
 
 void drawh(int x1,int y1,int x2)
 {
+    setbackyellow();
     for (int i = x1;i<=x2;i++)
     {
         gotoxy(i,y1);
-        cout << "*";
+        cout << " ";
     }
+    resetmode();
 }
 
 void drawv(int x1,int y1,int y2)
 {
+    setbackyellow();
     for (int i = y1;i<=y2;i++)
     {
         gotoxy(x1,i);
-        cout << "*";
+        cout << " ";
     }
+    resetmode();
 }
 
 void drawrect(int x1, int y1, int x2,int y2)
 {
+    
     drawh(x1,y1,x2);
     drawh(x1,y2,x2);
     drawv(x1,y1,y2);
     drawv(x2,y1,y2);
+
 }
 
 int calcprobs(char choice, int playernum)
@@ -162,24 +238,19 @@ switch (choice)
             cout << "**Miss**                ";
             b = 0;
         }
+    cout << flush;
     return b;
 }
 
 void shoot(char choice, int playernum)
 {
         setyellow();
-        for( int i = 0; i<50;i++)
+        for( int i = 0; i<19;i++)
         {
-         
-         if (playernum > 1)
-         {
-            gotoxy(3,14+playernum);
-            cout << "Computer " << playernum-1;
-         }
-         gotoxy(3+i,14+playernum);
+         gotoxy(3+i,10+playernum);
          cout << " -" << choice << "->";
          cout << flush; // draw to screen immediately, do not buffer
-         pause(10);
+         pause(30);
         }
 }
 
@@ -189,46 +260,48 @@ int main()
     clearscreen();
     seed = chrono::high_resolution_clock::now().time_since_epoch().count();  // better seed for random numbers since it uses nanoseconds
     srand(seed); // set random seed
-    setblue();
-    gotoxy(3,2 ); cout << "Bullseye ... by David Ahl of Creative Computing";
-    gotoxy(3,3 ); cout << "Throw darts at a target with 10, 20, 30 and 40 point zones";
-    gotoxy(3,4 ); cout << "First player to reach 200 points wins";
-    gotoxy(3,6 ); cout << "Throw           Description             Probable Score";
-    gotoxy(3,8 ); cout << "  1             Fast Overarm            Bullseye or Complete Miss";
-    gotoxy(3,9 ); cout << "  2             Controlled Overarm      10, 20, or 30 points";
-    gotoxy(3,10); cout << "  3             Underarm                Anything";
+    setblueonyellow();
+    gotoxy(3,2 ); cout << "Bullseye ... by David Ahl of Creative Computing                  ";
+    gotoxy(3,3 ); cout << "Throw darts at a target with 10, 20, 30 and 40 point zones       ";
+    gotoxy(3,4 ); cout << "First player to reach 200 points wins                            ";
+    setyellowongreen();
+    gotoxy(3,5 ); cout << "Throw           Description             Probable Score           ";
+    gotoxy(3,6 ); cout << "  1             Fast Overarm            Bullseye or Complete Miss";
+    gotoxy(3,7 ); cout << "  2             Controlled Overarm      10, 20, or 30 points     ";
+    gotoxy(3,8 ); cout << "  3             Underarm                Anything                 ";
     setgreen();
-    drawrect(1,1,70,11);
-    drawh(1,5,70);
-    drawh(1,7,70);
-    drawv(11,6,11); 
-    drawv(40,6,11);
+    setwhiteongrey();
+    gotoxy(50,11); cout << "Human:           ";
+    gotoxy(50,12); cout << "Computer 1:      ";
+    gotoxy(50,13); cout << "Computer 2:      ";
+    gotoxy(50,14); cout << "Computer 3:      ";
     r = 0;
     while ( (s < 200) && (s1 < 200) && (s2 < 200) && (s3 < 200) )
     {
-        r = r + 1;
-        setgreen();
-        gotoxy(3,13);cout << "Round " << r;
-        gotoxy(3,14);cout << "Input your choice of type of throw (1,2,3):";
+        r = r + 1;  
+        setyellowonblue();
+        gotoxy(3,10);cout << "Round "<< r << ". ";cout << "Input type of throw (1,2,3):";
+        resetmode();
+        setblackonred();
         cout << flush; // draw to screen immediately, do not buffer
         choice = rbgetchar();
         shoot(choice,1);
         b = calcprobs(choice,1);
         s = s + b;
+        gotoxy(63,11); cout << s;         pause(1000);
         shoot('1',2);
         b = calcprobs('1',2);
         s1 = s1 + b;
+        gotoxy(63,12); cout << s1;         pause(1000);
         shoot('2',3);
         b = calcprobs('2',3);
         s2 = s2 + b;
+        gotoxy(63,13); cout << s2;         pause(1000);
         shoot('3',4);
         b = calcprobs('3',4);
         s3 = s3 + b;
-        setblue();
-        cout << "\nHuman Score      = " << s << "\n";
-        cout << "Computer 1 Score = " << s1 << "\n";
-        cout << "Computer 2 Score = " << s2 << "\n";
-        cout << "Computer 3 Score = " << s3 << "\n";
+        gotoxy(63,14); cout << s3;         pause(1000);
+        resetmode();
     }
     if (s >= 200)
     {
