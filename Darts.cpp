@@ -208,6 +208,7 @@ void fillrect(int x1, int y1, int x2, int y2)
 int calcprobs(char choice, int playernum)
 {
 int b = 0;
+setwhiteongrey();
 switch (choice)
         {
         case '1':
@@ -219,17 +220,16 @@ switch (choice)
         case '2':
             p1 = 0.99;
             p2 = 0.77;
-            p3 = 0.43;
-            p4 = 0.01;
+            p3 = 0.53;
+            p4 = 0.15;
             break;
         default:
-            p1 = 0.95;
-            p2 = 0.75;
-            p3 = 0.45;
-            p4 = 0.05;
+            p1 = 0.90;
+            p2 = 0.82;
+            p3 = 0.66;
+            p4 = 0.1;
         }
         u = 1.0 * rand() / RAND_MAX;
-        setred();
         if (u >= p1)
         {
             cout << " Bullseye 40";
@@ -261,7 +261,7 @@ switch (choice)
 
 void shoot(char choice, int playernum)
 {
-        setyellow();
+        setwhiteongrey();
         for( int i = 0; i<31;i++)
         {
          gotoxy(1+i,8+playernum);
@@ -283,7 +283,7 @@ int main()
     gotoxy(1,4 ); cout << "First player to reach 200 points wins                            ";
     setyellowongreen();
     gotoxy(1,5 ); cout << "Throw           Description             Probable Score           ";
-    setwhiteongrey();
+    setwhiteongrey2();
     gotoxy(1,6 ); cout << "  1             Fast Overarm            Bullseye or Complete Miss";
     gotoxy(1,7 ); cout << "  2             Controlled Overarm      10, 20, or 30 points     ";
     gotoxy(1,8 ); cout << "  3             Underarm                Anything                 ";
