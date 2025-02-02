@@ -1,14 +1,13 @@
-// DartsConsole.cpp : This file contains the 'main' function. Program execution begins and ends there.
-//
-
-// Add 3 AI players: first one to 200 wins 
+// Throw Darts at board. 
+// Runs on Linux (can be modified to run on Windows 
+// by replacing rbgetchar() with cin)
 
 #include <iostream>
 #include <ctime>
-#include <chrono> // need for time (and so random) function
+#include <chrono> // need for time and pause (and random) function
 #include <thread> // for pausing
-#include <unistd.h>  // need for getch()
-#include <termios.h>  // need for getch()
+#include <unistd.h>   // Linux:  need for rbgetch()
+#include <termios.h>  // Linux:  need for rbgetch()
 
 using namespace std;
 
@@ -19,7 +18,6 @@ int s1 = 0; // total computer 1 score
 int s2 = 0; // total computer 2 score
 int s3 = 0; // total computer 3 score
 
-long long seed=0, seed1, seed2; // seed for random numbers
 double p1, p2, p3, p4; // probability waitings for successful shots
 double u; // 0 <= u <= 1,  random number to compare with probability waitings
 
@@ -89,10 +87,29 @@ void setgreen()
     cout << "\033[1;38;2;0;255;0m";
 }
 
+void setpurple()
+{
+   cout << "\033[1;38;2;128;0;128m"; 
+}
+
+void setorange()
+{
+   cout << "\033[1;38;2;255;165;0m"; 
+}
 
 void setwhite()
 {
     cout << "\033[1;38;2;0;0;0m";
+}
+
+void setbackorange()
+{
+    cout << "\033[1;48;2;255;165;0m";
+}
+
+void setbackpurple()
+{
+    cout << "\033[1;48;2;128;0;128m";
 }
 
 void setbackyellow()
@@ -123,6 +140,18 @@ void setbackgrey()
 void setbackgrey2()
 {
     cout << "\033[1;48;2;90;90;90m";
+}
+
+void setpurpleonorange()
+{   
+    setbackorange();
+    setpurple();
+}
+
+void setorangeonpurple()
+{   
+    setbackpurple();
+    setorange();
 }
 
 void setyellowongreen()
@@ -196,7 +225,6 @@ void drawrect(int x1, int y1, int x2,int y2)
     drawh(x1,y2,x2);
     drawv(x1,y1,y2);
     drawv(x2,y1,y2);
-
 }
 
 void fillrect(int x1, int y1, int x2, int y2)
@@ -274,6 +302,7 @@ void shoot(char choice, int playernum)
 int main()
 {
     char choice;
+    long long seed;
     clearscreen();
     seed = chrono::high_resolution_clock::now().time_since_epoch().count();  // better seed for random numbers since it uses nanoseconds
     srand(seed); // set random seed
@@ -283,7 +312,7 @@ int main()
     gotoxy(1,4 ); cout << "First player to reach 200 points wins                            ";
     setyellowongreen();
     gotoxy(1,5 ); cout << "Throw           Description             Probable Score           ";
-    setwhiteongrey2();
+    setpurpleonorange();
     gotoxy(1,6 ); cout << "  1             Fast Overarm            Bullseye or Complete Miss";
     gotoxy(1,7 ); cout << "  2             Controlled Overarm      10, 20, or 30 points     ";
     gotoxy(1,8 ); cout << "  3             Underarm                Anything                 ";
